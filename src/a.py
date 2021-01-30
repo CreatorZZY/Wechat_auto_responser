@@ -2,7 +2,7 @@
 Author: George Zhao
 Date: 2021-01-30 17:14:18
 LastEditors: George Zhao
-LastEditTime: 2021-01-30 17:34:20
+LastEditTime: 2021-01-30 17:39:43
 Description: 
 Email: 2018221138@email.szu.edu.cn
 Company: SZU
@@ -28,7 +28,7 @@ def text_reply(msg):
 
 
 if __name__ == '__main__':
-    itchat.login(enableCmdQR=False)
+    itchat.login(enableCmdQR=True)
 
     # 获取自己的UserName
     friends = itchat.get_friends(update=True)[0:]
