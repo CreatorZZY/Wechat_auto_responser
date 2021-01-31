@@ -2,7 +2,7 @@
 Author: George Zhao
 Date: 2021-01-30 17:14:18
 LastEditors: George Zhao
-LastEditTime: 2021-01-31 23:09:59
+LastEditTime: 2021-01-31 23:14:06
 Description: 
 Email: 2018221138@email.szu.edu.cn
 Company: SZU
@@ -41,7 +41,7 @@ def text_reply(msg):
             if msg['Text'][0] == '!':
                 msg_Text = str(msg['Text'])
                 if DEBUG_SWITCH == True:
-                    print(msg_Text)
+                    print('* {}'.format(msg_Text))
                 msg_Text = msg_Text.upper()
                 if msg_Text == '!ON':
                     R_SWITCH = True
@@ -66,7 +66,7 @@ def text_reply(msg):
                     else:
                         DEBUG_SWITCH = False
                     return 'Commanded. DEBUG_SWITCH={}'.format('True' if DEBUG_SWITCH else 'False')
-                elif msg_Text.find('!AUTOREPLYTEXT'):
+                elif msg_Text.find('!AUTOREPLYTEXT') >= 0:
                     l = msg['Text'].split('=', maxsplit=1)
                     if len(l) > 1:
                         AutoReply_text = l[1]
