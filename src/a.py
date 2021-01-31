@@ -2,7 +2,7 @@
 Author: George Zhao
 Date: 2021-01-30 17:14:18
 LastEditors: George Zhao
-LastEditTime: 2021-01-31 22:59:54
+LastEditTime: 2021-01-31 23:09:59
 Description: 
 Email: 2018221138@email.szu.edu.cn
 Company: SZU
@@ -21,6 +21,7 @@ R_SWITCH = False
 AutoReply_text_origin = 'Hi，抱歉噢，我不在线，有事直接打我手机，或者直接给我留言吧~[LetMeSee]'
 AutoReply_text = AutoReply_text_origin
 VERSION = 'gAutoReply v1.0.0'
+DEBUG_SWITCH = False
 
 # 自动回复
 # 封装好的装饰器，当接收到的消息是Text，即文字消息
@@ -30,6 +31,7 @@ def text_reply(msg):
     global R_SWITCH
     global AutoReply_text
     global VERSION
+    global DEBUG_SWITCH
     if not msg['FromUserName'] == Name["GeorgiZhao"]:
         # 回复给好友
         if R_SWITCH == True:
@@ -38,6 +40,8 @@ def text_reply(msg):
         if msg['Type'] == itchat.content.TEXT:
             if msg['Text'][0] == '!':
                 msg_Text = str(msg['Text'])
+                if DEBUG_SWITCH == True:
+                    print(msg_Text)
                 msg_Text = msg_Text.upper()
                 if msg_Text == '!ON':
                     R_SWITCH = True
@@ -48,15 +52,22 @@ def text_reply(msg):
                 elif msg_Text == '!VERSION':
                     return VERSION
                 elif msg_Text == '!STATUS':
-                    return 'VERSION={VERSION}\nR_SWITCH={R_SWITCH}\nAutoReply_text={AutoReply_text}\nTime={Time}, CN'.format(
+                    return 'STATUS\n* VERSION={VERSION}\n* DEBUG_SWITCH={DEBUG_SWITCH}\n* R_SWITCH={R_SWITCH}\n* AutoReply_text={AutoReply_text}\n* Time={Time}, CN'.format(
                         VERSION=VERSION,
                         R_SWITCH='True' if R_SWITCH else 'False',
                         AutoReply_text=AutoReply_text,
+                        DEBUG_SWITCH='True' if DEBUG_SWITCH else 'False',
                         Time=datetime.datetime.fromtimestamp(int(time.time()), pytz.timezone(
                             'Asia/Hong_Kong')).strftime('%Y-%m-%d %H:%M:%S')
                     )
+                elif msg_Text == '!DEBUG':
+                    if DEBUG_SWITCH == False:
+                        DEBUG_SWITCH = True
+                    else:
+                        DEBUG_SWITCH = False
+                    return 'Commanded. DEBUG_SWITCH={}'.format('True' if DEBUG_SWITCH else 'False')
                 elif msg_Text.find('!AUTOREPLYTEXT'):
-                    l = msg_Text.split('=', maxsplit=1)
+                    l = msg['Text'].split('=', maxsplit=1)
                     if len(l) > 1:
                         AutoReply_text = l[1]
                         return 'Commanded. AutoReply_text Changed: {}'.format(AutoReply_text)
