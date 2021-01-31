@@ -2,7 +2,7 @@
 Author: George Zhao
 Date: 2021-01-30 17:14:18
 LastEditors: George Zhao
-LastEditTime: 2021-01-31 22:46:00
+LastEditTime: 2021-01-31 22:57:33
 Description: 
 Email: 2018221138@email.szu.edu.cn
 Company: SZU
@@ -29,7 +29,6 @@ def text_reply(msg):
     # 当消息不是由自己发出的时候
     global R_SWITCH
     global AutoReply_text
-    global AutoReply_text_origin
     global VERSION
     if not msg['FromUserName'] == Name["GeorgiZhao"]:
         # 回复给好友
@@ -37,21 +36,34 @@ def text_reply(msg):
             return "[自动回复]{}\n{}, CN\nFrom Google Cloud".format(AutoReply_text, datetime.datetime.fromtimestamp(int(time.time()), pytz.timezone('Asia/Hong_Kong')).strftime('%Y-%m-%d %H:%M:%S'))
     else:
         if msg['Type'] == itchat.content.TEXT:
-            if msg['Text'] == '!ON':
-                R_SWITCH = True
-                return 'Commanded. R_SWITCH={}'.format('True' if R_SWITCH else 'False')
-            elif msg['Text'] == '!OFF':
-                R_SWITCH = False
-                return 'Commanded. R_SWITCH={}'.format('True' if R_SWITCH else 'False')
-            elif msg['Text'] == '!VERSION':
-                return VERSION
-            elif str(msg['Text']).find('!AUTOREPLYTEXT'):
-                l = str(msg['Text']).split('=', maxsplit=1)
-                if len(l) > 1:
-                    AutoReply_text = l[1]
-                    return 'Commanded. AutoReply_text Changed: {}'.format(AutoReply_text)
+            if msg['Text'][0] == '!':
+                msg_Text = str(msg['Text'])
+                msg_Text = msg_Text.upper()
+                if msg_Text == '!ON':
+                    R_SWITCH = True
+                    return 'Commanded. R_SWITCH={}'.format('True' if R_SWITCH else 'False')
+                elif msg_Text == '!OFF':
+                    R_SWITCH = False
+                    return 'Commanded. R_SWITCH={}'.format('True' if R_SWITCH else 'False')
+                elif msg_Text == '!VERSION':
+                    return VERSION
+                elif msg_Text == '!STATUS':
+                    return 'VERSION={VERSION}\nR_SWITCH={nR_SWITCH}\nAutoReply_text={AutoReply_text}\nTime={Time}, CN'.format(
+                        VERSION=VERSION,
+                        R_SWITCH='True' if R_SWITCH else 'False',
+                        AutoReply_text=AutoReply_text,
+                        Time=datetime.datetime.fromtimestamp(int(time.time()), pytz.timezone(
+                            'Asia/Hong_Kong')).strftime('%Y-%m-%d %H:%M:%S')
+                    )
+                elif msg_Text.find('!AUTOREPLYTEXT'):
+                    l = msg_Text.split('=', maxsplit=1)
+                    if len(l) > 1:
+                        AutoReply_text = l[1]
+                        return 'Commanded. AutoReply_text Changed: {}'.format(AutoReply_text)
+                    else:
+                        return 'Commanded. AutoReply_text Unchange: {}'.format(AutoReply_text)
                 else:
-                    return 'Commanded. AutoReply_text Unchange: {}'.format(AutoReply_text)
+                    pass
             else:
                 pass
         else:
