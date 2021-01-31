@@ -2,7 +2,7 @@
 Author: George Zhao
 Date: 2021-01-30 17:14:18
 LastEditors: George Zhao
-LastEditTime: 2021-01-31 22:57:33
+LastEditTime: 2021-01-31 22:59:54
 Description: 
 Email: 2018221138@email.szu.edu.cn
 Company: SZU
@@ -48,7 +48,7 @@ def text_reply(msg):
                 elif msg_Text == '!VERSION':
                     return VERSION
                 elif msg_Text == '!STATUS':
-                    return 'VERSION={VERSION}\nR_SWITCH={nR_SWITCH}\nAutoReply_text={AutoReply_text}\nTime={Time}, CN'.format(
+                    return 'VERSION={VERSION}\nR_SWITCH={R_SWITCH}\nAutoReply_text={AutoReply_text}\nTime={Time}, CN'.format(
                         VERSION=VERSION,
                         R_SWITCH='True' if R_SWITCH else 'False',
                         AutoReply_text=AutoReply_text,
