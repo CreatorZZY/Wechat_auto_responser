@@ -2,7 +2,7 @@
 Author: George Zhao
 Date: 2021-01-30 17:14:18
 LastEditors: George Zhao
-LastEditTime: 2021-02-01 13:50:20
+LastEditTime: 2021-02-01 13:56:53
 Description: 
 Email: 2018221138@email.szu.edu.cn
 Company: SZU
@@ -40,7 +40,7 @@ def text_reply(msg):
         if msg['Type'] == itchat.content.TEXT:
             msg_Text = str(msg['Text'])
             if msg_Text[0] == '！':
-                msg_Text.replace('！', '!', 1)
+                msg_Text = msg_Text.replace('！', '!', 1)
             if msg_Text[0] == '!':
                 if DEBUG_SWITCH == True:
                     print('* {}'.format(msg_Text))
