@@ -2,7 +2,7 @@
 Author: George Zhao
 Date: 2021-01-30 17:14:18
 LastEditors: George Zhao
-LastEditTime: 2021-02-01 13:56:53
+LastEditTime: 2021-02-22 17:14:50
 Description: 
 Email: 2018221138@email.szu.edu.cn
 Company: SZU
@@ -23,6 +23,11 @@ AutoReply_text = AutoReply_text_origin
 VERSION = 'gAutoReply v1.0.0'
 DEBUG_SWITCH = False
 
+MyUserName = ''
+
+Time_s_To_Wait = 2 * 60
+dict_that_responsed = dict()
+
 # 自动回复
 # 封装好的装饰器，当接收到的消息是Text，即文字消息
 @itchat.msg_register(['Text', 'Map', 'Card', 'Note', 'Sharing', 'Picture'])
@@ -32,11 +37,21 @@ def text_reply(msg):
     global AutoReply_text
     global VERSION
     global DEBUG_SWITCH
-    if not msg['FromUserName'] == Name["GeorgiZhao"]:
+    global dict_that_responsed
+    global Time_s_To_Wait
+    if not msg['FromUserName'] == MyUserName:
         # 回复给好友
-        if R_SWITCH == True:
-            return "[自动回复]{}\n{}, CN\nFrom Google Cloud".format(AutoReply_text, datetime.datetime.fromtimestamp(int(time.time()), pytz.timezone('Asia/Hong_Kong')).strftime('%Y-%m-%d %H:%M:%S'))
+        if R_SWITCH != True:
+            pass
+        else:
+            if msg['FromUserName'] not in dict_that_responsed or time.time() - dict_that_responsed[msg['FromUserName']] > Time_s_To_Wait:
+                dict_that_responsed[msg['FromUserName']] = time.time()
+                return "[自动回复]{}\n{}, CN\nFrom Google Cloud".format(AutoReply_text, datetime.datetime.fromtimestamp(int(time.time()), pytz.timezone('Asia/Hong_Kong')).strftime('%Y-%m-%d %H:%M:%S'))
+            else:
+                pass
     else:
+        if msg['ToUserName'] != MyUserName:
+            dict_that_responsed[msg['ToUserName']] = time.time()
         if msg['Type'] == itchat.content.TEXT:
             msg_Text = str(msg['Text'])
             if msg_Text[0] == '！':
@@ -51,6 +66,16 @@ def text_reply(msg):
                 elif msg_Text == '!OFF':
                     R_SWITCH = False
                     return 'Commanded. R_SWITCH={}'.format('True' if R_SWITCH else 'False')
+                elif msg_Text.find('!TIMETOWAIT') == 0:
+                    l = msg['Text'].split('=', maxsplit=1)
+                    try:
+                        if len(l) > 1:
+                            Time_s_To_Wait = int(l[1])
+                            return f'Commanded. TIMETOWAIT={Time_s_To_Wait} seconds.'
+                        else:
+                            return f'Commanded. TIMETOWAIT Unchange: {Time_s_To_Wait} seconds.'
+                    except ValueError as e:
+                        return repr(e)
                 elif msg_Text == '!VERSION':
                     return VERSION
                 elif msg_Text == '!STATUS':
@@ -62,13 +87,15 @@ def text_reply(msg):
                         Time=datetime.datetime.fromtimestamp(int(time.time()), pytz.timezone(
                             'Asia/Hong_Kong')).strftime('%Y-%m-%d %H:%M:%S')
                     )
+                elif msg_Text == '!DICT':
+                    print(msg)
                 elif msg_Text == '!DEBUG':
                     if DEBUG_SWITCH == False:
                         DEBUG_SWITCH = True
                     else:
                         DEBUG_SWITCH = False
                     return 'Commanded. DEBUG_SWITCH={}'.format('True' if DEBUG_SWITCH else 'False')
-                elif msg_Text.find('!AUTOREPLYTEXT') >= 0:
+                elif msg_Text.find('!AUTOREPLYTEXT') == 0:
                     l = msg['Text'].split('=', maxsplit=1)
                     if len(l) > 1:
                         AutoReply_text = l[1]
@@ -88,12 +115,5 @@ if __name__ == '__main__':
 
     # 获取自己的UserName
     friends = itchat.get_friends(update=True)[0:]
-    Name = {}
-    Nic = []
-    User = []
-    for i in range(len(friends)):
-        Nic.append(friends[i]["NickName"])
-        User.append(friends[i]["UserName"])
-    for i in range(len(friends)):
-        Name[Nic[i]] = User[i]
+    MyUserName = itchat.search_friends()['UserName']
     itchat.run()
