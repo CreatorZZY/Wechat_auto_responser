@@ -2,7 +2,7 @@
 Author: George Zhao
 Date: 2021-01-30 17:14:18
 LastEditors: George Zhao
-LastEditTime: 2021-02-22 17:14:50
+LastEditTime: 2021-02-22 17:16:58
 Description: 
 Email: 2018221138@email.szu.edu.cn
 Company: SZU
@@ -25,7 +25,7 @@ DEBUG_SWITCH = False
 
 MyUserName = ''
 
-Time_s_To_Wait = 2 * 60
+Time_s_To_Wait = 30
 dict_that_responsed = dict()
 
 # 自动回复
